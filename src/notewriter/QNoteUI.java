@@ -1,35 +1,33 @@
 package notewriter;
 
 import java.awt.EventQueue;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JButton;
 import javax.swing.JTextArea;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.Component;
+
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.RowSpec;
 import com.jgoodies.forms.layout.FormSpecs;
+import java.awt.CardLayout;
+import javax.swing.JPanel;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 
-public class QNoteUI implements ActionListener{
+public class QNoteUI{
 
-	private JFrame frmQuicknoteWriter;
-	protected JButton btnSubmit, btnEditPathShortCuts;
-	private JTextArea txtrSampleText;
 	
-	private static final String SUBMIT = "submit";
-	private static final String EDIT_NOTE_TEXT = "text";
-	private static final String UPDATE_MAPS = "update";
+	public static final String NOTE_GUI = "NotePanel";
+	public static final String MAP_GUI = "MapPanel";
+	
+	private JFrame frmQuicknoteWriter;
+	
 	/**
 	 * Launch the application.
 	 */
@@ -45,16 +43,6 @@ public class QNoteUI implements ActionListener{
 			}
 		});
 	}
-	
-	protected String getNoteText(){
-		String text;
-		try {
-			text = txtrSampleText.getText();
-		} catch (NullPointerException e) {
-			text = "";
-		}
-		return text;
-	}
 
 	/**
 	 * Create the application.
@@ -62,91 +50,151 @@ public class QNoteUI implements ActionListener{
 	public QNoteUI() {
 		initialize();
 	}
-
+	
 	/**
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
 		frmQuicknoteWriter = new JFrame();
 		frmQuicknoteWriter.setTitle("QuickNote Writer");
-		frmQuicknoteWriter.setBounds(100, 100, 960, 775);
+		frmQuicknoteWriter.setBounds(100, 100, 960, 912);
 		frmQuicknoteWriter.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frmQuicknoteWriter.getContentPane().setLayout(new FormLayout(new ColumnSpec[] {
-				ColumnSpec.decode("469px"),
-				ColumnSpec.decode("469px"),},
+		frmQuicknoteWriter.getContentPane().setLayout(new CardLayout(0, 0));
+		
+		JPanel panel_note = new JPanel();
+		frmQuicknoteWriter.getContentPane().add(panel_note, NOTE_GUI);
+		panel_note.setLayout(new FormLayout(new ColumnSpec[] {
+				ColumnSpec.decode("456px:grow"),
+				FormSpecs.RELATED_GAP_COLSPEC,
+				ColumnSpec.decode("max(210dlu;default)"),},
 			new RowSpec[] {
-				FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC,
 				RowSpec.decode("45px"),
-				RowSpec.decode("169px"),
-				RowSpec.decode("410px"),
+				FormSpecs.RELATED_GAP_ROWSPEC,
+				RowSpec.decode("max(306dlu;default):grow"),
+				FormSpecs.RELATED_GAP_ROWSPEC,
 				FormSpecs.DEFAULT_ROWSPEC,
 				FormSpecs.RELATED_GAP_ROWSPEC,
-				RowSpec.decode("54px"),}));
+				RowSpec.decode("max(22dlu;default)"),}));
 		
-		JLabel lblEnterNote = new JLabel("  Enter note text below.  Start note with >CODE to specify save location shortcut.  Select edit path shortcuts to configure.");
-		lblEnterNote.setFont(new Font("Sitka Heading", Font.BOLD, 15));
-		lblEnterNote.setBackground(new Color(255, 239, 213));
-		frmQuicknoteWriter.getContentPane().add(lblEnterNote, "1, 2, 2, 1, fill, fill");
+		JLabel lblEnterNote = new JLabel("  Enter note. Use >CODE to specify save location shortcut.  Select edit map to set up shortcuts. ");
+		lblEnterNote.setFont(new Font("Sitka Heading", Font.BOLD, 16));
+		panel_note.add(lblEnterNote, "1, 1, 3, 1, fill, fill");
 		
-		JTextArea txtrSampleText = new JTextArea();
-		txtrSampleText.setAlignmentY(Component.TOP_ALIGNMENT);
-		txtrSampleText.setAlignmentX(Component.LEFT_ALIGNMENT);
-		txtrSampleText.setFont(new Font("Sitka Text", Font.PLAIN, 12));
-		txtrSampleText.setBackground(Color.WHITE);
-		txtrSampleText.setText("Sample text");
-		txtrSampleText.setTabSize(4);
-		txtrSampleText.setRows(1);
-		txtrSampleText.setColumns(2);
-		frmQuicknoteWriter.getContentPane().add(txtrSampleText, "1, 3, 2, 2, fill, fill");
-		txtrSampleText.getDocument().addDocumentListener(new DocumentListener() {
-			public void changedUpdate(DocumentEvent e) {
-				
+		JTextArea textArea = new JTextArea();
+		textArea.setLineWrap(true);
+		textArea.setWrapStyleWord(true);
+		textArea.setFont(new Font("Sitka Text", Font.PLAIN, 16));
+		panel_note.add(textArea, "1, 3, 3, 1, fill, fill");
+		
+		JLabel lblSaveTo = new JLabel("  Save to: <PATH>");
+		lblSaveTo.setFont(new Font("Sitka Subheading", Font.PLAIN, 16));
+		panel_note.add(lblSaveTo, "1, 5, 3, 1");
+		
+		JButton btnSubmit_1 = new JButton("Submit <Ctrl + Enter>");
+		btnSubmit_1.setFont(new Font("Sitka Display", Font.BOLD, 16));
+		panel_note.add(btnSubmit_1, "1, 7");
+		
+		JButton btnEditMappings = new JButton("Edit mappings <Alt + Enter>");
+		btnEditMappings.setFont(new Font("Sitka Display", Font.BOLD, 16));
+		panel_note.add(btnEditMappings, "3, 7");
+		
+		
+		
+		JPanel panel_connections = new JPanel();
+		frmQuicknoteWriter.getContentPane().add(panel_connections, MAP_GUI);
+		panel_connections.setLayout(new FormLayout(new ColumnSpec[] {
+				ColumnSpec.decode("168px:grow"),
+				ColumnSpec.decode("766px"),},
+			new RowSpec[] {
+				FormSpecs.LABEL_COMPONENT_GAP_ROWSPEC,
+				RowSpec.decode("20px"),
+				FormSpecs.RELATED_GAP_ROWSPEC,
+				FormSpecs.DEFAULT_ROWSPEC,
+				FormSpecs.RELATED_GAP_ROWSPEC,
+				RowSpec.decode("max(358dlu;default):grow"),
+				FormSpecs.RELATED_GAP_ROWSPEC,
+				FormSpecs.DEFAULT_ROWSPEC,}));
+		
+		JLabel label = new JLabel("  Set up shortcut codes");
+		panel_connections.add(label, "1, 2");
+		
+		JLabel lblShortcut = new JLabel("   Shortcut");
+		lblShortcut.setFont(new Font("Sitka Text", Font.ITALIC, 16));
+		panel_connections.add(lblShortcut, "1, 4");
+		
+		JLabel lblTargetPath = new JLabel("  Target Path");
+		lblTargetPath.setFont(new Font("Sitka Text", Font.ITALIC, 16));
+		panel_connections.add(lblTargetPath, "2, 4");
+		
+		JTable table = new JTable();
+		table.setGridColor(Color.LIGHT_GRAY);
+		table.setRowSelectionAllowed(false);
+		table.setFont(new Font("Sitka Text", Font.PLAIN, 16));
+		table.setModel(new DefaultTableModel(
+			new String[][] {
+				{"CODE", "O:\\staff\\ballen"},
+				{null, null},
+				{null, null},
+				{null, null},
+				{null, null},
+				{null, null},
+				{null, null},
+				{null, null},
+				{null, null},
+				{null, null},
+				{null, null},
+				{null, null},
+				{null, null},
+				{null, null},
+				{null, null},
+				{null, null},
+				{null, null},
+				{null, null},
+				{null, null},
+				{null, null},
+				{null, null},
+				{null, null},
+				{null, null},
+				{null, null},
+				{null, null},
+				{null, null},
+				{null, null},
+				{null, null},
+				{null, null},
+				{null, null},
+				{null, null},
+				{null, null},
+				{null, null},
+				{null, null},
+				{null, null},
+				{null, null},
+				{null, null},
+				{null, null},
+				{null, null},
+				{null, null},
+				{null, null},
+				{null, null},
+				{null, null},
+				{null, null},
+				{null, null},
+				{null, null},
+				{null, null},
+			},
+			new String[] {
+				"Shortcut", "Target"
 			}
-			public void removeUpdate(DocumentEvent e){
-				
-			}
-			public void insertUpdate(DocumentEvent e){
-				
-			}
-			
-			public void checkMaps(DocumentEvent e){
-				
-			}
-		});
+		));
+		table.getColumnModel().getColumn(0).setPreferredWidth(153);
+		table.getColumnModel().getColumn(1).setPreferredWidth(830);
+		panel_connections.add(table, "1, 6, 2, 1, fill, fill");
 		
-		JLabel lblNewLabel = new JLabel("    Will save to: <PATH>");
-		lblNewLabel.setFont(new Font("Sitka Subheading", Font.PLAIN, 15));
-		frmQuicknoteWriter.getContentPane().add(lblNewLabel, "1, 5, 2, 2");
-		
-		JButton btnSubmit = new JButton("Submit <Ctrl + Enter>");
-		btnSubmit.setFont(new Font("Sitka Display", Font.BOLD, 16));
-		frmQuicknoteWriter.getContentPane().add(btnSubmit, "1, 7, fill, fill");
-		btnSubmit.setActionCommand(SUBMIT);
-		
-		JButton btnEditPathShortcuts = new JButton("Edit Path Shortcuts <Alt + Enter>");
-		btnEditPathShortcuts.setFont(new Font("Sitka Display", Font.BOLD, 16));
-		frmQuicknoteWriter.getContentPane().add(btnEditPathShortcuts, "2, 7, fill, fill");
-		btnSubmit.setActionCommand(UPDATE_MAPS);
+		JButton btnUpdateMappings = new JButton("Update Mappings <Alt + Enter>");
+		btnUpdateMappings.setFont(new Font("Sitka Display", Font.BOLD, 16));
+		panel_connections.add(btnUpdateMappings, "1, 8, 2, 1, center, default");
 
-		//Listen for action commands
-		btnEditPathShortcuts.addActionListener(this);
-		btnSubmit.addActionListener(this);
-		
+
+		//Set and activate event listeners.  Pass responsive elements to controller.  End GUI setup.
+		QNoteUIController listener = new QNoteUIController(frmQuicknoteWriter, btnSubmit_1, btnUpdateMappings, btnUpdateMappings, textArea, table);
+		listener.activateEventHandlers();
 	}
-
-    public void actionPerformed(ActionEvent e) {
-	    if(EDIT_NOTE_TEXT.equals(e.getActionCommand())){
-	    	
-	    }
-	    else if (SUBMIT.equals(e.getActionCommand())){ 
-	    
-
-        }
-    	else if (UPDATE_MAPS.equals(e.getActionCommand())){
-    	
-        	
-        }
-    }
-
-	
 }
