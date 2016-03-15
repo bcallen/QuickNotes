@@ -111,7 +111,7 @@ public class QNoteUIController implements ActionListener {
 	    }
 	    else if (SUBMIT_NOTE.equals(e.getActionCommand())){
 	    	parseInputText();
-	    	noteConnect.write(note, connection_key, cMap.isPath(connection_key));
+	    	noteConnect.write(note, connection_key, cMap.isDirectory(connection_key));
         }
     	else if (GOTO_CONNECTION_UI.equals(e.getActionCommand())){
         	//go to map UI
