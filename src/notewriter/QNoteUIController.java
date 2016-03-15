@@ -53,9 +53,7 @@ public class QNoteUIController implements ActionListener {
 		txtNoteText = form_txtNoteText;
 		pathLabel = form_pathLabel;
 		
-		btnSubmitNote.setEnabled(false);
-
-		
+		btnSubmitNote.setEnabled(false);		
 	}
 	
 	public void activateEventHandlers(){
@@ -88,7 +86,9 @@ public class QNoteUIController implements ActionListener {
 			
 			public void checkMaps(DocumentEvent e){
 				SwingWorker<String, Void> worker = new SwingWorker<String, Void>() {
+					
 					String[] wKeyNote = new String[2];
+					
 				    @Override
 				    public String doInBackground() {
 				    	String currentText = txtNoteText.getText();
@@ -100,16 +100,22 @@ public class QNoteUIController implements ActionListener {
 				    @Override
 				    public void done() {
 				    	//Update target labeling and activate/disable submit button
-						pathLabel.setText(LABEL_NO_TARGET);
-				     
+				    	try {
+				    		String target = get();
+				    		if (target == null){
+				    			pathLabel.setText(LABEL_NO_TARGET);
+				    			btnSubmitNote.setEnabled(false);
+				    		} else {
+				    			pathLabel.setText(LABEL_WITH_TARGET.concat(get()));//concat with target path
+				    			btnSubmitNote.setEnabled(true);
+				    		}
+				    	} catch (Exception ignore) {
+				    		//TODO handle exception
+				    	}
+				
 				    }
 				};
 				worker.execute();
-				
-				//use swing worker?
-				//parse key only
-				//lookup path from map
-				//if successful active submit button and update target path
 			}
 		});
 	}
@@ -129,11 +135,10 @@ public class QNoteUIController implements ActionListener {
 	}
 	
 	private void swapVisibleGUI(){
-		//there are only two panels.  This would need substantial revisions if this changes.
+		//there are only two panels.  This would need substantial revisions if the GUI structure changes (e.g. new panel added)
 		CardLayout cl = (CardLayout)(guiFrame.getLayout());
 		cl.next(guiFrame);
 	}
-	
 	
 	private String[] parseInputText(String text){
 		String[] keyNotePair;
@@ -147,11 +152,8 @@ public class QNoteUIController implements ActionListener {
 			keyNotePair[0] = "";
 			keyNotePair[1] = text;
 		}
-		
 		return keyNotePair;
 	}
-
-	
 
     public void actionPerformed(ActionEvent e) {
 	    if(UPDATE_MAPS.equals(e.getActionCommand())){
@@ -161,10 +163,11 @@ public class QNoteUIController implements ActionListener {
 	    }
 	    else if (SUBMIT_NOTE.equals(e.getActionCommand())){
 	    	String[] keynote = new String[2];
+	    	//split path key from note body
 	    	keynote = parseInputText(txtNoteText.getText());
 	    	connection_key = keynote[0];
 	    	note = keynote[1];
-	    	noteConnect.write(note, connection_key, cMap.isDirectory(connection_key));
+	    	noteConnect.write(note, connection_key, cMap.isDirectory(connection_key), cMap.isFile(connection_key));
         }
     	else if (GOTO_CONNECTION_UI.equals(e.getActionCommand())){
         	//go to map UI
