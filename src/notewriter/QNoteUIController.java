@@ -35,6 +35,9 @@ public class QNoteUIController implements ActionListener {
 	private static final String GOTO_CONNECTION_UI = "maps";
 	private static final String UPDATE_MAPS = "update";
 	
+	private static final String LABEL_NO_TARGET = "  Add a file key to the first line to set note save location.";
+	private static final String LABEL_WITH_TARGET = "  Path: ";
+	
 	private Pattern findKey;
 	
 	private static final String regexFindKey = "^\\s*>([A-Za-z_])[\\r\\n\\s]+(.*)$";
@@ -49,6 +52,10 @@ public class QNoteUIController implements ActionListener {
 		btnSubmitPathMap = form_btnSubmitPathMap;
 		txtNoteText = form_txtNoteText;
 		pathLabel = form_pathLabel;
+		
+		btnSubmitNote.setEnabled(false);
+
+		
 	}
 	
 	public void activateEventHandlers(){
@@ -80,7 +87,7 @@ public class QNoteUIController implements ActionListener {
 			}
 			
 			public void checkMaps(DocumentEvent e){
-				SwingWorker worker = new SwingWorker<String, Void>() {
+				SwingWorker<String, Void> worker = new SwingWorker<String, Void>() {
 					String[] wKeyNote = new String[2];
 				    @Override
 				    public String doInBackground() {
@@ -92,24 +99,12 @@ public class QNoteUIController implements ActionListener {
 
 				    @Override
 				    public void done() {
-				        //Remove the "Loading images" label.
+				    	//Update target labeling and activate/disable submit button
+						pathLabel.setText(LABEL_NO_TARGET);
 				     
-				        /*try {
-				            imgs = get();
-				        } catch (InterruptedException ignore) {}
-				        catch (java.util.concurrent.ExecutionException e) {
-				            String why = null;
-				            Throwable cause = e.getCause();
-				            if (cause != null) {
-				                why = cause.getMessage();
-				            } else {
-				                why = e.getMessage();
-				            }
-				            System.err.println("Er: " + why);
-				        }*/
 				    }
 				};
-
+				worker.execute();
 				
 				//use swing worker?
 				//parse key only

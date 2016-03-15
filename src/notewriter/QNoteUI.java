@@ -122,7 +122,7 @@ public class QNoteUI{
 		lblShortcut.setFont(new Font("Sitka Text", Font.ITALIC, 16));
 		panel_connections.add(lblShortcut, "1, 4");
 		
-		JLabel lblTargetPath = new JLabel("  Target Path");
+		JLabel lblTargetPath = new JLabel("  Add a file key to the first line to set note save location.");
 		lblTargetPath.setFont(new Font("Sitka Text", Font.ITALIC, 16));
 		panel_connections.add(lblTargetPath, "2, 4");
 		

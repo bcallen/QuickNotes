@@ -3,7 +3,13 @@ package notewriter;
 import java.io.File;
 import java.util.HashMap;
 //import java.net.URL;  Can use this lib to check whether URL is valid in future
-
+/*
+ * Future TODO:  Support the following types of targets: 
+ * 1) exact file path 
+ * 2) directory path (default filename) 
+ * 3) URL (POST template) 
+ * 4) list of keys linking to 1-3 (recursive)
+ */
 public class ConnectionMap{
 
 	private HashMap<String, String> paths;
