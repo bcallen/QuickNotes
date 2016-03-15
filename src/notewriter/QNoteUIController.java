@@ -3,11 +3,15 @@ package notewriter;
 import java.awt.CardLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
+import javax.swing.SwingWorker;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
@@ -19,6 +23,7 @@ public class QNoteUIController implements ActionListener {
 	protected JTextArea txtNoteText;
 	protected JButton btnSubmitNote, btnEditPathMap, btnSubmitPathMap;
 	protected JTable table;
+	protected JLabel pathLabel;
 	
 	protected ConnectionMap cMap;
 	protected NoteConnector noteConnect;
@@ -29,8 +34,13 @@ public class QNoteUIController implements ActionListener {
 	private static final String SUBMIT_NOTE = "submit";
 	private static final String GOTO_CONNECTION_UI = "maps";
 	private static final String UPDATE_MAPS = "update";
+	
+	private Pattern findKey;
+	
+	private static final String regexFindKey = "^\\s*>([A-Za-z_])[\\r\\n\\s]+(.*)$";
 
-	public QNoteUIController(JFrame form_guiFrame, JButton form_btnSubmitNote, JButton form_btnEditPathMap, JButton form_btnSubmitPathMap, JTextArea form_txtNoteText, JTable form_table){
+	public QNoteUIController(JFrame form_guiFrame, JButton form_btnSubmitNote, JButton form_btnEditPathMap, 
+			JButton form_btnSubmitPathMap, JTextArea form_txtNoteText, JTable form_table, JLabel form_pathLabel){
 		//reference all responsive elements from GUI to be used by controller
 		table = form_table;
 		guiFrame = form_guiFrame;
@@ -38,6 +48,7 @@ public class QNoteUIController implements ActionListener {
 		btnEditPathMap = form_btnEditPathMap;
 		btnSubmitPathMap = form_btnSubmitPathMap;
 		txtNoteText = form_txtNoteText;
+		pathLabel = form_pathLabel;
 	}
 	
 	public void activateEventHandlers(){
@@ -45,6 +56,9 @@ public class QNoteUIController implements ActionListener {
 		
 		//load initial map (will be reloaded if necessary)
 		loadCMap();
+
+
+		findKey = Pattern.compile(regexFindKey, Pattern.DOTALL);
 		
 		btnEditPathMap.setActionCommand(GOTO_CONNECTION_UI);
 		btnSubmitNote.setActionCommand(SUBMIT_NOTE);
@@ -66,6 +80,37 @@ public class QNoteUIController implements ActionListener {
 			}
 			
 			public void checkMaps(DocumentEvent e){
+				SwingWorker worker = new SwingWorker<String, Void>() {
+					String[] wKeyNote = new String[2];
+				    @Override
+				    public String doInBackground() {
+				    	String currentText = txtNoteText.getText();
+				        wKeyNote = parseInputText(currentText);
+				    	String sPath = cMap.getPath(wKeyNote[0]);
+				        return sPath;
+				    }
+
+				    @Override
+				    public void done() {
+				        //Remove the "Loading images" label.
+				     
+				        /*try {
+				            imgs = get();
+				        } catch (InterruptedException ignore) {}
+				        catch (java.util.concurrent.ExecutionException e) {
+				            String why = null;
+				            Throwable cause = e.getCause();
+				            if (cause != null) {
+				                why = cause.getMessage();
+				            } else {
+				                why = e.getMessage();
+				            }
+				            System.err.println("Er: " + why);
+				        }*/
+				    }
+				};
+
+				
 				//use swing worker?
 				//parse key only
 				//lookup path from map
@@ -95,10 +140,20 @@ public class QNoteUIController implements ActionListener {
 	}
 	
 	
-	private void parseInputText(){
-		//find key
-		//set connection key
-		//set note to input text less starting whitespace/newlines and key
+	private String[] parseInputText(String text){
+		String[] keyNotePair;
+		keyNotePair = new String[2];
+		Matcher parseMatch = findKey.matcher(text);
+		
+		if (parseMatch.find()){
+			keyNotePair[0] = parseMatch.group(1);
+			keyNotePair[1] = parseMatch.group(2);
+		} else {
+			keyNotePair[0] = "";
+			keyNotePair[1] = text;
+		}
+		
+		return keyNotePair;
 	}
 
 	
@@ -110,7 +165,10 @@ public class QNoteUIController implements ActionListener {
 	    	swapVisibleGUI();
 	    }
 	    else if (SUBMIT_NOTE.equals(e.getActionCommand())){
-	    	parseInputText();
+	    	String[] keynote = new String[2];
+	    	keynote = parseInputText(txtNoteText.getText());
+	    	connection_key = keynote[0];
+	    	note = keynote[1];
 	    	noteConnect.write(note, connection_key, cMap.isDirectory(connection_key));
         }
     	else if (GOTO_CONNECTION_UI.equals(e.getActionCommand())){
