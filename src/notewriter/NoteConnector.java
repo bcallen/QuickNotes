@@ -1,5 +1,10 @@
 package notewriter;
 
+import org.pegdown.PegDownProcessor;
+import java.util.Date;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+
 public class NoteConnector {
 	
 	private static final String DEFAULT_FILE_NAME = "Notes to add to project memo.html";
@@ -7,7 +12,7 @@ public class NoteConnector {
 	public NoteConnector(){
 		
 	}
-	
+
 	public void write(String note, String cString, boolean isDirectory, boolean isFile){
 		if (isDirectory){
 			writeToFile(note, cString);
@@ -38,8 +43,21 @@ public class NoteConnector {
 	}
 	
 	private String finalizeMarkDownNote(String rawNote){
-		//TODO add user and pub date
-		//TODO attempt to convert from markdown to HTML using either PegDown or Txtmark (initial version will just write raw text)
+		String header, finalNote;
+		
+		//Add user + date/time stamp
+		String dateString;
+		//get current date time with Date()
+		DateFormat dateFormat = new SimpleDateFormat("MMM dd, YYYY HH:mm:ss");
+		dateString = dateFormat.format(new Date());
+		//lookup username from system
+		String userName = System.getProperty("user.name");
+		
+		header = String.format("==Note from %s on %s==\n", userName, dateString);
+		rawNote = header.concat(rawNote);
+		
+		PegDownProcessor pg = new PegDownProcessor();
+		finalNote = pg.parser(rawNote);
 		String finalNote;
 		finalNote = rawNote;
 		return finalNote;

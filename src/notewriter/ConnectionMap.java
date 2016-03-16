@@ -35,7 +35,7 @@ public class ConnectionMap{
 		}
 		
 		paths.put(key, path);
-		pathIsDirectory.put(key, isDir); //What about paths that are valid but don't exist yet?
+		pathIsDirectory.put(key, isDir); 
 		pathIsFile.put(key, isFile);
 	}
 	
