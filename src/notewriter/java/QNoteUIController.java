@@ -109,8 +109,9 @@ public class QNoteUIController implements ActionListener {
 				    			pathLabel.setText(LABEL_WITH_TARGET.concat(get()));//concat with target path
 				    			btnSubmitNote.setEnabled(true);
 				    		}
-				    	} catch (Exception ignore) {
+				    	} catch (Exception e) {
 				    		//TODO handle exception
+							e.printStackTrace();
 				    	}
 				
 				    }
