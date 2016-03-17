@@ -1,4 +1,4 @@
-package notewriter;
+package notewriter.java;
 
 import java.io.File;
 import java.util.HashMap;

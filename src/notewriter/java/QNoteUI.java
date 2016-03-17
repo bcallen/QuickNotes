@@ -1,4 +1,4 @@
-package notewriter;
+package notewriter.java;
 
 import java.awt.EventQueue;
 

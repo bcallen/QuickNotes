@@ -1,4 +1,4 @@
-package notewriter;
+package notewriter.java;
 
 import org.pegdown.PegDownProcessor;
 import java.util.Date;
@@ -26,13 +26,14 @@ public class NoteConnector {
 	}
 	
 	private void writeToFile(String note, String cString, String fileName){
+		//HTMLDocument htmlDoc = new HTMLDocument();
 		//convert note to HTML
 		note = finalizeMarkDownNote(note);
 		
+		
 		//TODO does file exist?
-		//if not create from template
-		//if so append at top
-		//include date and user name 
+		//if not copy in template
+		//if so append of body 
 	}
 	
 	private void postToURL(String note, String cString){
@@ -50,16 +51,15 @@ public class NoteConnector {
 		//get current date time with Date()
 		DateFormat dateFormat = new SimpleDateFormat("MMM dd, YYYY HH:mm:ss");
 		dateString = dateFormat.format(new Date());
-		//lookup username from system
+		//lookup user name from system
 		String userName = System.getProperty("user.name");
 		
 		header = String.format("==Note from %s on %s==\n", userName, dateString);
 		rawNote = header.concat(rawNote);
 		
 		PegDownProcessor pg = new PegDownProcessor();
-		finalNote = pg.parser(rawNote);
-		String finalNote;
-		finalNote = rawNote;
+		finalNote = pg.markdownToHtml(rawNote);
+
 		return finalNote;
 	}
 	
