@@ -27,15 +27,17 @@ public class ConnectionMap{
 		pathIsFile = new HashMap<String, Boolean>();
 		
 		isHTMLFilePath = Pattern.compile(IS_HTML_FILE);
+
 	}
 	
 	public void load(String key, String path){
+		System.out.print("Hello "); 
 		File file = new File(path);
 		
 		boolean isDir = false;
 		boolean isFile = false;
 
-		Matcher htmlFileMatch = isHTMLFilePath.matcher(getPath(key));
+		Matcher htmlFileMatch = isHTMLFilePath.matcher(path);
 		
 		if (htmlFileMatch.find()){
 			isFile = true;

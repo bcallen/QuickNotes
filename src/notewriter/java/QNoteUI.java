@@ -195,7 +195,7 @@ public class QNoteUI{
 
 		//Set and activate event listeners.  Pass responsive elements to controller.  End GUI setup.
 		QNoteUIController listener = new QNoteUIController(frmQuicknoteWriter, btnSubmit_1, 
-										btnUpdateMappings, btnUpdateMappings, textArea,
+										btnEditMappings, btnUpdateMappings, textArea,
 										table, lblSaveTo);
 		listener.activateEventHandlers();
 	}

@@ -44,6 +44,9 @@ public class QNoteUIController implements ActionListener {
 
 	public QNoteUIController(JFrame form_guiFrame, JButton form_btnSubmitNote, JButton form_btnEditPathMap, 
 			JButton form_btnSubmitPathMap, JTextArea form_txtNoteText, JTable form_table, JLabel form_pathLabel){
+		
+		cMap = new ConnectionMap();
+		
 		//reference all responsive elements from GUI to be used by controller
 		table = form_table;
 		guiFrame = form_guiFrame;
@@ -52,6 +55,7 @@ public class QNoteUIController implements ActionListener {
 		btnSubmitPathMap = form_btnSubmitPathMap;
 		txtNoteText = form_txtNoteText;
 		pathLabel = form_pathLabel;
+
 		
 		btnSubmitNote.setEnabled(false);		
 	}
@@ -123,21 +127,27 @@ public class QNoteUIController implements ActionListener {
 
 	private void loadCMap(){
 		for (int count = 0; count < table.getRowCount(); count++){
-			String key;
-			String path;
+			String key; Object okey;
+			String path; Object opath;
 			
-			key = table.getValueAt(count, 0).toString();
-			path = table.getValueAt(count, 0).toString();
+			//TODO improve this
+			okey = table.getValueAt(count, 0);
+			opath = table.getValueAt(count, 1);
 			
-			if (key != "" && path != "" && key != null && path != null){
-				cMap.load(key, path);				
+			if (okey != null && opath != null){
+				key = okey.toString();
+				path = opath.toString();
+			
+				if (key != "" && path != ""){ 
+					cMap.load(key, path);		
+				}
 			}
 		}
 	}
 	
 	private void swapVisibleGUI(){
 		//there are only two panels.  This would need substantial revisions if the GUI structure changes (e.g. new panel added)
-		CardLayout cl = (CardLayout)(guiFrame.getLayout());
+		CardLayout cl = (CardLayout)(guiFrame.getContentPane().getLayout());
 		cl.next(guiFrame);
 	}
 	

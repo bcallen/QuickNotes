@@ -3,9 +3,6 @@ package notewriter.java;
 import org.pegdown.PegDownProcessor;
 import java.util.Date;
 
-import javax.swing.text.html.HTMLDocument;
-import javax.swing.text.html.HTMLEditorKit;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -13,6 +10,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+
+
 
 
 public class NoteConnector {
@@ -37,8 +36,6 @@ public class NoteConnector {
 	private void writeToFile(String note, String cString, boolean includesFileName){
 		
 		Path filePath;
-		//HTMLEditorKit htmlEdit = new HTMLEditorKit();
-		HTMLDocument htmlDoc;
 		
 		//get file path
 		if (!includesFileName){
@@ -53,7 +50,7 @@ public class NoteConnector {
 		//convert note to HTML
 		note = finalizeMarkDownNote(note);
 		
-		//copy out template if needed		
+		//copy HTML template to file path if needed		
 		if (!fileExists(cString)){
 			try {
 				Files.copy(HTML_TEMPLATE_REL_PATH, filePath);
@@ -63,8 +60,7 @@ public class NoteConnector {
 			}
 		}
 		
-		//htmlDoc = new HTMLDocument(filePath);
-		//HERE
+		SimpleHTMLInserter.insert(cString, note, "//body/h1[1]");
 	}
 	
 	private void postToURL(String note, String cString){
@@ -73,16 +69,7 @@ public class NoteConnector {
 		//wait
 		//consume response and report
 	}
-	
-	private void copyTemplateBodyToFile(String TemplatePath){
-		
-	}
-	
-	private String getDirFromPath(String path){
-		File f = new File(path);
-		return f.getParent();
-	}
-	
+
 	private boolean fileExists(String path){
 		File f = new File(path);
 		return f.isFile();
