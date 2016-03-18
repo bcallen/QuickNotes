@@ -29,7 +29,7 @@ public class QNoteUIController implements ActionListener {
 	protected NoteConnector noteConnect;
 	
 	private String note;
-	private String connection_key;
+	private String connectionKey;
 	
 	private static final String SUBMIT_NOTE = "submit";
 	private static final String GOTO_CONNECTION_UI = "maps";
@@ -40,12 +40,13 @@ public class QNoteUIController implements ActionListener {
 	
 	private Pattern findKey;
 	
-	private static final String regexFindKey = "^\\s*>([A-Za-z_])[\\r\\n\\s]+(.*)$";
+	private static final String regexFindKey = "^\\s*?>([A-Za-z_]*)\\s*\\n*(.*)$";
 
 	public QNoteUIController(JFrame form_guiFrame, JButton form_btnSubmitNote, JButton form_btnEditPathMap, 
 			JButton form_btnSubmitPathMap, JTextArea form_txtNoteText, JTable form_table, JLabel form_pathLabel){
 		
 		cMap = new ConnectionMap();
+		noteConnect = new NoteConnector();
 		
 		//reference all responsive elements from GUI to be used by controller
 		table = form_table;
@@ -103,6 +104,7 @@ public class QNoteUIController implements ActionListener {
 
 				    @Override
 				    public void done() {
+						System.out.print("Hello ");
 				    	//Update target labeling and activate/disable submit button
 				    	try {
 				    		String target = get();
@@ -148,7 +150,7 @@ public class QNoteUIController implements ActionListener {
 	private void swapVisibleGUI(){
 		//there are only two panels.  This would need substantial revisions if the GUI structure changes (e.g. new panel added)
 		CardLayout cl = (CardLayout)(guiFrame.getContentPane().getLayout());
-		cl.next(guiFrame);
+		cl.next(guiFrame.getContentPane());
 	}
 	
 	private String[] parseInputText(String text){
@@ -174,11 +176,14 @@ public class QNoteUIController implements ActionListener {
 	    }
 	    else if (SUBMIT_NOTE.equals(e.getActionCommand())){
 	    	String[] keynote = new String[2];
+	    	String activePath;
 	    	//split path key from note body
 	    	keynote = parseInputText(txtNoteText.getText());
-	    	connection_key = keynote[0];
+	    	connectionKey = keynote[0];
+	    	activePath = cMap.getPath(connectionKey);
 	    	note = keynote[1];
-	    	noteConnect.write(note, connection_key, cMap.isDirectory(connection_key), cMap.isFile(connection_key));
+	    	noteConnect.write(note, activePath, cMap.isDirectory(connectionKey), cMap.isFile(connectionKey));
+	    	System.exit(0);
         }
     	else if (GOTO_CONNECTION_UI.equals(e.getActionCommand())){
         	//go to map UI

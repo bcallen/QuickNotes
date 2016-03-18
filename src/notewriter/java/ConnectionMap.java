@@ -30,8 +30,7 @@ public class ConnectionMap{
 
 	}
 	
-	public void load(String key, String path){
-		System.out.print("Hello "); 
+	public void load(String key, String path){ 
 		File file = new File(path);
 		
 		boolean isDir = false;

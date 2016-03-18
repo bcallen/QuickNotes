@@ -7,42 +7,40 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 
-import javax.xml.parsers.DocumentBuilder;
+/*import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.*;
-import org.w3c.dom.*;
+import org.w3c.dom.*;*/
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 
 public class  SimpleHTMLInserter {
 
-	 XPath xpath = XPathFactory.newInstance().newXPath();
+	// XPath xpath = XPathFactory.newInstance().newXPath();
 	
 	public SimpleHTMLInserter(){
 		
 	}
 	
-	public static void insert(String xmlBodyFilePath,String xmlToAdd, String xPathAddAfter) {
-        File xmlFile = new File(xmlBodyFilePath);
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        DocumentBuilder db;
+	public static void insertAfterTag(String htmlBodyFilePath,String htmlToAdd, String htmlTagAddAfter) {
+        File htmlFile = new File(htmlBodyFilePath);
+    
+        Jsoup js;
 	    try{
 			// read from files
-		    db = dbf.newDocumentBuilder();
-		    Document doc = db.parse(xmlFile);
+		    Document doc = js.parse(htmlFile, "UTF-8");
 		    // find the node to add to
-		    XPath xpath = XPathFactory.newInstance().newXPath();
 
-		    Node existingHTML1 = (Node) xpath.evaluate(xPathAddAfter, doc.getDocumentElement(), NODE);
-		    Element node =  DocumentBuilderFactory
-		    	    .newInstance()
-		    	    .newDocumentBuilder()
-		    	    .parse(new ByteArrayInputStream(xmlToAdd.getBytes()))
-		    	    .getDocumentElement();
+		    Element existingHTML1 = doc.getElementById(htmlTagAddAfter);
+		    Element node =  js.parse(htmlToAdd);
 		    // insert the nodes
-		    existingHTML1.getParentNode().insertBefore(node,existingHTML1.getNextSibling());
+		    node = existingHTML1.after(node);
+		    existingHTML1.getParentNode().insertBefore(importedNode,existingHTML1.getNextSibling());
 		    
 		    Transformer transformer =
 	                TransformerFactory.newInstance().newTransformer();

@@ -17,7 +17,7 @@ import java.text.SimpleDateFormat;
 public class NoteConnector {
 	
 	private static final String DEFAULT_FILE_NAME = "Notes to add to project memo.html";
-	private static final Path HTML_TEMPLATE_REL_PATH = Paths.get("resources/template.html");
+	private static final Path HTML_TEMPLATE_REL_PATH = Paths.get("src/notewriter/resources/template.html");
 	//private cMap = new ConnectionMap();
 	public NoteConnector(){
 		
@@ -53,6 +53,7 @@ public class NoteConnector {
 		//copy HTML template to file path if needed		
 		if (!fileExists(cString)){
 			try {
+				System.out.println(System.getProperty("user.dir"));
 				Files.copy(HTML_TEMPLATE_REL_PATH, filePath);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -60,7 +61,7 @@ public class NoteConnector {
 			}
 		}
 		
-		SimpleHTMLInserter.insert(cString, note, "//body/h1[1]");
+		SimpleHTMLInserter.insertAfterTag(cString, note, "MainTitle");
 	}
 	
 	private void postToURL(String note, String cString){

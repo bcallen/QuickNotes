@@ -133,7 +133,7 @@ public class QNoteUI{
 		table.setModel(new DefaultTableModel(
 			new String[][] {
 				{"CODE", "O:\\staff\\ballen"},
-				{null, null},
+				{"TEST", "C:\\Users\\allen_000\\Documents\\My Games\\"},
 				{null, null},
 				{null, null},
 				{null, null},
