@@ -104,7 +104,6 @@ public class QNoteUIController implements ActionListener {
 
 				    @Override
 				    public void done() {
-						System.out.print("Hello ");
 				    	//Update target labeling and activate/disable submit button
 				    	try {
 				    		String target = get();

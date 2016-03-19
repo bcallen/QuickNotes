@@ -11,8 +11,6 @@ import org.jsoup.nodes.Element;
 
 public class  SimpleHTMLInserter {
 
-	// XPath xpath = XPathFactory.newInstance().newXPath();
-	
 	public SimpleHTMLInserter(){
 		
 	}
@@ -25,12 +23,12 @@ public class  SimpleHTMLInserter {
 		    Document doc = Jsoup.parse(htmlFile, "UTF-8");
 
 		    Element existingHTML1 = doc.getElementById(htmlTagAddAfter);
-		    Element node =  Jsoup.parse(htmlToAdd);
+		    Element node =  Jsoup.parseBodyFragment(htmlToAdd).body();
 		    // insert the node
 		    node = existingHTML1.after(node);
 		    
 		    BufferedWriter htmlWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(htmlFile), "UTF-8"));
-		    htmlWriter.write(doc.toString());
+		    htmlWriter.write(doc.html());
 		    htmlWriter.close();
 		    
 	    } catch (Exception e) {

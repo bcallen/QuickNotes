@@ -53,7 +53,6 @@ public class NoteConnector {
 		//copy HTML template to file path if needed		
 		if (!fileExists(cString)){
 			try {
-				System.out.println(System.getProperty("user.dir"));
 				Files.copy(HTML_TEMPLATE_REL_PATH, filePath);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -87,7 +86,7 @@ public class NoteConnector {
 		//lookup user name from system
 		String userName = System.getProperty("user.name");
 		
-		header = String.format("==Note from %s on %s==\n", userName, dateString);
+		header = String.format("## Note from %s on %s ##  \n", userName, dateString);
 		rawNote = header.concat(rawNote);
 		
 		PegDownProcessor pg = new PegDownProcessor();
