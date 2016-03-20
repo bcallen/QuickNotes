@@ -25,6 +25,7 @@ public class QNoteUI{
 	
 	public static final String NOTE_GUI = "NotePanel";
 	public static final String MAP_GUI = "MapPanel";
+	public static final String VERSION_NUM = "0.0.1";
 	
 	private JFrame frmQuicknoteWriter;
 	
@@ -56,7 +57,7 @@ public class QNoteUI{
 	 */
 	private void initialize() {
 		frmQuicknoteWriter = new JFrame();
-		frmQuicknoteWriter.setTitle("QuickNote Writer");
+		frmQuicknoteWriter.setTitle("QuickNote Writer v"+VERSION_NUM);
 		frmQuicknoteWriter.setBounds(100, 100, 960, 912);
 		frmQuicknoteWriter.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmQuicknoteWriter.getContentPane().setLayout(new CardLayout(0, 0));
@@ -132,8 +133,8 @@ public class QNoteUI{
 		table.setFont(new Font("Sitka Text", Font.PLAIN, 16));
 		table.setModel(new DefaultTableModel(
 			new String[][] {
-				{"CODE", "O:\\staff\\ballen"},
-				{"TEST", "C:\\Users\\allen_000\\Documents\\My Games\\"},
+				{"CODE", "O:\\staff\\ballen\\"},
+				{null, null},
 				{null, null},
 				{null, null},
 				{null, null},

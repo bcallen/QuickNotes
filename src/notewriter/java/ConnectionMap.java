@@ -2,6 +2,7 @@ package notewriter.java;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.regex.Matcher;
 //import java.net.URL;  Can use this lib to check whether URL is valid in future
 /*
@@ -51,6 +52,22 @@ public class ConnectionMap{
 	
 	public String getPath(String key){
 		return paths.get(key);
+	}
+	
+	public String[][] getPathMappingArray(){
+		String[][] outputArray = new String[paths.keySet().size()][2];
+		Iterator<String> keyIter = paths.keySet().iterator();
+		Integer i = 0;
+		
+		while (keyIter.hasNext()){
+			String currentKey = keyIter.next();
+			String currentPath = paths.get(currentKey);
+			outputArray[i][0] = currentKey;
+			outputArray[i][1] = currentPath;
+			i++;
+		}
+		return outputArray;
+		
 	}
 	
 	public boolean isDirectory(String key){

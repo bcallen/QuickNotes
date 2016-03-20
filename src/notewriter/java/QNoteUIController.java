@@ -14,22 +14,26 @@ import javax.swing.JTextArea;
 import javax.swing.SwingWorker;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.table.DefaultTableModel;
 
 //This class controls responsive features of the UI and event handling.  
-//It is closely coupled with the UI implementation.
+//It is tightly coupled with the UI implementation.
 public class QNoteUIController implements ActionListener {
 	
-	protected JFrame guiFrame;
-	protected JTextArea txtNoteText;
-	protected JButton btnSubmitNote, btnEditPathMap, btnSubmitPathMap;
-	protected JTable table;
-	protected JLabel pathLabel;
+	private JFrame guiFrame;
+	private JTextArea txtNoteText;
+	private JButton btnSubmitNote, btnEditPathMap, btnSubmitPathMap;
+	private JTable table;
+	private JLabel pathLabel;
 	
-	protected ConnectionMap cMap;
-	protected NoteConnector noteConnect;
+	private ConnectionMap cMap;
+	private NoteConnector noteConnect;
+	private ConfigurationData config;
 	
 	private String note;
 	private String connectionKey;
+	
+	private Pattern findKey;
 	
 	private static final String SUBMIT_NOTE = "submit";
 	private static final String GOTO_CONNECTION_UI = "maps";
@@ -37,16 +41,16 @@ public class QNoteUIController implements ActionListener {
 	
 	private static final String LABEL_NO_TARGET = "  Add a file key to the first line to set note save location.";
 	private static final String LABEL_WITH_TARGET = "  Path: ";
-	
-	private Pattern findKey;
+
 	
 	private static final String regexFindKey = "^\\s*?>([A-Za-z_]*)\\s*\\n*(.*)$";
 
 	public QNoteUIController(JFrame form_guiFrame, JButton form_btnSubmitNote, JButton form_btnEditPathMap, 
 			JButton form_btnSubmitPathMap, JTextArea form_txtNoteText, JTable form_table, JLabel form_pathLabel){
 		
+		config = new ConfigurationData(form_table.getRowCount());
 		cMap = new ConnectionMap();
-		noteConnect = new NoteConnector();
+		noteConnect = new NoteConnector(config.getDefaultDocName());
 		
 		//reference all responsive elements from GUI to be used by controller
 		table = form_table;
@@ -57,15 +61,17 @@ public class QNoteUIController implements ActionListener {
 		txtNoteText = form_txtNoteText;
 		pathLabel = form_pathLabel;
 
+		btnSubmitNote.setEnabled(false);
 		
-		btnSubmitNote.setEnabled(false);		
+		setGUITableFromStringMatrix(config.getPathMap());
 	}
 	
 	public void activateEventHandlers(){
 		//TODO read and load GUI connection table from config file
+		//TODO enable pasting paths into table from clipboard
 		
 		//load initial map (will be reloaded if necessary)
-		loadCMap();
+		loadCMapFromGUITable();
 
 
 		findKey = Pattern.compile(regexFindKey, Pattern.DOTALL);
@@ -126,7 +132,7 @@ public class QNoteUIController implements ActionListener {
 		});
 	}
 
-	private void loadCMap(){
+	private void loadCMapFromGUITable(){
 		for (int count = 0; count < table.getRowCount(); count++){
 			String key; Object okey;
 			String path; Object opath;
@@ -144,6 +150,15 @@ public class QNoteUIController implements ActionListener {
 				}
 			}
 		}
+	}
+	
+	private void setGUITableFromStringMatrix(String[][] map){
+		table.setModel(new DefaultTableModel(
+				map,
+				new String[] {
+					"Shortcut", "Target"
+				}
+			));
 	}
 	
 	private void swapVisibleGUI(){
@@ -169,13 +184,19 @@ public class QNoteUIController implements ActionListener {
 
     public void actionPerformed(ActionEvent e) {
 	    if(UPDATE_MAPS.equals(e.getActionCommand())){
-	    	loadCMap();
+	    	loadCMapFromGUITable();
+	    	
+	    	//update config file path mapping and save config file
+	    	config.setPathMap(cMap.getPathMappingArray());
+	    	config.saveConfigFile();
+	    	
 	    	//go back to main UI
 	    	swapVisibleGUI();
 	    }
 	    else if (SUBMIT_NOTE.equals(e.getActionCommand())){
 	    	String[] keynote = new String[2];
 	    	String activePath;
+	    	
 	    	//split path key from note body
 	    	keynote = parseInputText(txtNoteText.getText());
 	    	connectionKey = keynote[0];

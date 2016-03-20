@@ -11,16 +11,17 @@ import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
-
-
-
 public class NoteConnector {
 	
-	private static final String DEFAULT_FILE_NAME = "Notes to add to project memo.html";
+	private String defaultFileName;
 	private static final Path HTML_TEMPLATE_REL_PATH = Paths.get("src/notewriter/resources/template.html");
 	//private cMap = new ConnectionMap();
 	public NoteConnector(){
-		
+		defaultFileName = "Notes.html";
+	}
+	
+	public NoteConnector(String inDefaultFileName){
+		defaultFileName = inDefaultFileName;
 	}
 
 	public void write(String note, String cString, boolean isDirectory, boolean isFile){
@@ -42,7 +43,7 @@ public class NoteConnector {
 			if(!cString.endsWith("\\")){
 				cString = cString.concat("\\");
 			}
-			cString = cString.concat(DEFAULT_FILE_NAME);
+			cString = cString.concat(defaultFileName);
 		} 
 		
 		filePath = Paths.get(cString);
