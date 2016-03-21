@@ -43,7 +43,7 @@ public class QNoteUIController implements ActionListener {
 	private static final String LABEL_WITH_TARGET = "  Path: ";
 
 	
-	private static final String regexFindKey = "^\\s*?>([A-Za-z_]*)\\s*\\n*(.*)$";
+	private static final String regexFindKey = "^\\s*?>([A-Za-z_]*)([\\s|\\n]+?.*)";
 
 	public QNoteUIController(JFrame form_guiFrame, JButton form_btnSubmitNote, JButton form_btnEditPathMap, 
 			JButton form_btnSubmitPathMap, JTextArea form_txtNoteText, JTable form_table, JLabel form_pathLabel){

@@ -1,8 +1,6 @@
 package notewriter.java;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 
 import javax.xml.parsers.DocumentBuilder; 
 import javax.xml.parsers.DocumentBuilderFactory;
